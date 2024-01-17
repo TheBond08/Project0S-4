@@ -6,6 +6,8 @@
 #include <semaphore.h>
 #include <fcntl.h>
 
+#define ERROR 1
+
 sem_t *semP1, *semP2, *semP3;
 FILE *file;
 
@@ -47,38 +49,43 @@ int main(){
 
 
     file = fopen("file.txt", "w");
+    printf("Opening file\n");
     if(file == NULL){
-        printf("Error opening file");
-        exit(1);
+        printf("Error opening file\n");
+        return ERROR;
     }
 
     pid_t pid1, pid2, pid3; //Preparing the 3 child processes
 
+    printf("Creating child process\n");
     pid1 = fork();
-    if(pid1 > 0){
+    if(pid1 == 0){
         Process1();
         exit(0);
+        printf("Process 1 created\n");
     } else if(pid1 < 0){
-        printf("Failed to fork process 1");
-        exit(2);
+        printf("Failed to fork process 1\n");
+        return ERROR;
     }
 
     pid2 = fork();
-    if(pid2 > 0){
+    if(pid2 == 0){
         Process2();
         exit(0);
+        printf("Process 2 created\n");
     } else if(pid2 < 0){
-        printf("Failed to fork process 2");
-        exit(2);
+        printf("Failed to fork process 2\n");
+        return ERROR;
     }
 
     pid3 = fork();
-    if(pid3 > 0){
+    if(pid3 == 0){
         Process3();
         exit(0);
+        printf("Process 3 created\n");
     } else if(pid3 < 0){
-        printf("Failed to fork process 3");
-        exit(2);
+        printf("Failed to fork process 3\n");
+        return ERROR;
     }
 
 
