@@ -20,7 +20,7 @@ void Process1() {
         printf("A");
         fprintf(file, "A");
         fflush(file);
-        sem_post(semP2);
+        sem_post(semP3);
     }
 }
 
@@ -30,7 +30,7 @@ void Process2() {
         printf("B");
         fprintf(file, "B");
         fflush(file);
-        sem_post(semP3);
+        sem_post(semP1);
     }
 }
 
@@ -40,7 +40,7 @@ void Process3() {
         printf("C");
         fprintf(file, "C");
         fflush(file);
-        sem_post(semP1);
+        sem_post(semP2);
     }
 }
 
