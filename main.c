@@ -5,66 +5,34 @@
 #include <unistd.h>
 #include <semaphore.h>
 #include <fcntl.h>
-//#include "processes.h"
+#include "processes.h"
 
-#define ERROR_ITINIALIZING_SEMAPHORE 1
+#define ERROR_INITIALIZING_SEMAPHORE 1
 #define ERROR_CANNOT_OPEN_FILE 2
 #define ERROR_FORK_PROCESS_FAILED 3
 
-sem_t *semP1, *semP2, *semP3;
-FILE *file;
-
-void Process1() {
-    while (1) {
-        sem_wait(semP1);
-        printf("A");
-        fprintf(file, "A");
-        fflush(file);
-        sem_post(semP3);
-    }
-}
-
-void Process2() {
-    while (1) {
-        sem_wait(semP2);
-        printf("B");
-        fprintf(file, "B");
-        fflush(file);
-        sem_post(semP1);
-    }
-}
-
-void Process3() {
-    while (1) {
-        sem_wait(semP3);
-        printf("C");
-        fprintf(file, "C");
-        fflush(file);
-        sem_post(semP2);
-    }
-}
 
 int main() {
 
-
+    //Ensures that the semaphores are destroyed, if previously created, so that the program runs properly
     sem_unlink("semP1");
     sem_unlink("semP2");
     sem_unlink("semP3");
 
-    //Initializing the semaphores
+    //Initializing the semaphores, with semP2 starting at 1
     semP1 = sem_open("semP1", O_CREAT, 0644, 0);
     semP2 = sem_open("semP2", O_CREAT, 0644, 1);
     semP3 = sem_open("semP3", O_CREAT, 0644, 0);
 
     if (semP1 == SEM_FAILED || semP2 == SEM_FAILED || semP3 == SEM_FAILED) { //Checking if the semaphores were initialized successfully
         perror("Semaphore initialization failed\n");
-        return ERROR_ITINIALIZING_SEMAPHORE;
+        return ERROR_INITIALIZING_SEMAPHORE;
     }
 
     //Opening the file to write the results
     file = fopen("file.txt", "w");
     printf("Opening file\n");
-    if (file == NULL) {
+    if (file == NULL) { //Checking if the file was created successfully
         printf("Error opening file\n");
         return ERROR_CANNOT_OPEN_FILE;
     }
@@ -75,7 +43,7 @@ int main() {
     printf("Creating child processes\n");
 
     pid1 = fork();
-    if (pid1 == 0) {
+    if (pid1 == 0) { //Creates child Process1
         Process1();
         exit(0);
     } else if (pid1 < 0) {
@@ -84,7 +52,7 @@ int main() {
     }
 
     pid2 = fork();
-    if (pid2 == 0) {
+    if (pid2 == 0) { //Creates child Process2
         Process2();
         exit(0);
     } else if (pid2 < 0) {
@@ -93,7 +61,7 @@ int main() {
     }
 
     pid3 = fork();
-    if (pid3 == 0) {
+    if (pid3 == 0) { //Creates child Process3
         Process3();
         exit(0);
     } else if (pid3 < 0) {

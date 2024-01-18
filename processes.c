@@ -1,6 +1,6 @@
 #include "processes.h"
 
-sem_t semP1, semP2, semP3;
+sem_t *semP1, *semP2, *semP3;
 
 FILE *file;
 
@@ -10,7 +10,7 @@ void Process1() {
         printf("A");
         fprintf(file, "A");
         fflush(file);
-        sem_post(semP3);
+        sem_post(semP3); //Signals Process3
     }
 }
 
@@ -20,7 +20,7 @@ void Process2() {
         printf("B");
         fprintf(file, "B");
         fflush(file);
-        sem_post(semP1);
+        sem_post(semP1); //Signals Process1 
     }
 }
 
@@ -30,6 +30,6 @@ void Process3() {
         printf("C");
         fprintf(file, "C");
         fflush(file);
-        sem_post(semP2);
+        sem_post(semP2); //Signals Process2
     }
 }
